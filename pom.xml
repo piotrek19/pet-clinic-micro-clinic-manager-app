@@ -33,6 +33,11 @@
         <system>GitHub Issues</system>
     </issueManagement>
 
+    <scm>
+        <developerConnection>scm:git:git@github.com:piotrek19/pet-clinic-micro-clinic-manager-app.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
     <developers>
         <developer>
             <id>pd</id>
@@ -70,11 +75,6 @@
         <docker.image.port>8072</docker.image.port> <!-- port to be mapped -->
         <!-- end of Docker -->
     </properties>
-
-    <scm>
-        <developerConnection>scm:git:git@github.com:piotrek19/pet-clinik.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
 
     <dependencies>
         <!-- Dependencies for tests: -->
