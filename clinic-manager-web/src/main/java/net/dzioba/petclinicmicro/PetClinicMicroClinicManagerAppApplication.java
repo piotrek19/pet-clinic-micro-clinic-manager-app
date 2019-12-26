@@ -1,4 +1,4 @@
-package net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp;
+package net.dzioba.petclinicmicro;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
