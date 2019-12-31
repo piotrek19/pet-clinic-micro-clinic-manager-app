@@ -28,6 +28,9 @@ public class Visit extends BaseEntity {
     @JoinColumn(name = "pet_id")
     private Pet pet;
 
+    @OneToOne(mappedBy = "visit")
+    private RoomReservation roomReservation;
+
     @Builder
     public Visit(Long id, LocalDateTime date, String description, Pet pet) {
         super(id);
