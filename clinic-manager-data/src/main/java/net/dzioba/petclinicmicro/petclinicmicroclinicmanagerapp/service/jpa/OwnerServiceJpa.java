@@ -38,6 +38,14 @@ public class OwnerServiceJpa implements OwnerService {
     }
 
     @Override
+    public List<Owner> findByLastNameLike(String lastName) {
+        log.debug(className + " - find by last name: "+ lastName);
+        requireNonNull(lastName);
+
+        return ownerRepository.findByLastNameLike(lastName);
+    }
+
+    @Override
     public Owner save(Owner owner) {
         log.debug(className + " - save for object: " + owner);
         requireNonNull(owner);

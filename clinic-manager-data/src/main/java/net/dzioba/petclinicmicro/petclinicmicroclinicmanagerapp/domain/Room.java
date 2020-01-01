@@ -2,9 +2,7 @@ package net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Getter
@@ -21,11 +19,16 @@ public class Room extends BaseEntity {
     @Column(name = "description")
     private String description;
 
+    @OneToOne
+    @JoinColumn(name = "main_vet_id")
+    private Vet mainVet;
+
     @Builder
-    public Room(Long id, String name, String description) {
+    public Room(Long id, String name, String description, Vet mainVet) {
         super(id);
         this.name = name;
         this.description = description;
+        this.mainVet = mainVet;
     }
 
     @Override
@@ -34,12 +37,13 @@ public class Room extends BaseEntity {
         if (!(o instanceof Room)) return false;
         Room room = (Room) o;
         return Objects.equals(name, room.name) &&
-                Objects.equals(description, room.description);
+                Objects.equals(description, room.description) &&
+                Objects.equals(mainVet, room.mainVet);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description);
+        return Objects.hash(name, description, mainVet);
     }
 
     @Override
