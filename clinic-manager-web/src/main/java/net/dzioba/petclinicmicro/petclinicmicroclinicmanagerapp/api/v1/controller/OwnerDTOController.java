@@ -3,7 +3,7 @@ package net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.controll
 
 import net.dzioba.petclinicmicro.common.model.OwnerDTO;
 import net.dzioba.petclinicmicro.common.model.OwnerListDTO;
-import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.service.OwnerDTOService;
+import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.service.jpa.OwnerDTOServiceJpa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +15,10 @@ public class OwnerDTOController {
 
     public static final String BASE_URL = "/api/v1/owners";
 
-    private final OwnerDTOService ownerDTOService;
+    private final OwnerDTOServiceJpa ownerDTOService;
 
     @Autowired
-    public OwnerDTOController(OwnerDTOService ownerDTOService) {
+    public OwnerDTOController(OwnerDTOServiceJpa ownerDTOService) {
         this.ownerDTOService = ownerDTOService;
     }
 

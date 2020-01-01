@@ -1,7 +1,7 @@
 package net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.controller;
 
 import net.dzioba.petclinicmicro.common.model.OwnerDTO;
-import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.service.OwnerDTOService;
+import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.service.jpa.OwnerDTOServiceJpa;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +33,7 @@ class OwnerDTOControllerTest {
     private OwnerDTOController ownerDTOController; //class under test
 
     @Mock
-    private OwnerDTOService ownerDTOService;
+    private OwnerDTOServiceJpa ownerDTOService;
 
     private MockMvc mockMvc;
 

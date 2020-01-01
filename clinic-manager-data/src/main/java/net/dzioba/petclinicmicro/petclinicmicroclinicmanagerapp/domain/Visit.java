@@ -18,7 +18,7 @@ public class Visit extends BaseEntity {
 
     @NotNull
     @Column(name = "date")
-    private LocalDateTime date;
+    private LocalDateTime dateTime;
 
     @Size(max = 255)
     @Column(name = "description")
@@ -40,9 +40,9 @@ public class Visit extends BaseEntity {
     private RoomReservation roomReservation;
 
     @Builder
-    public Visit(Long id, LocalDateTime date, String description, Owner owner, Pet pet) {
+    public Visit(Long id, LocalDateTime dateTime, String description, Owner owner, Pet pet) {
         super(id);
-        this.date = date;
+        this.dateTime = dateTime;
         this.description = description;
         this.owner = owner;
         this.pet = pet;
@@ -53,7 +53,7 @@ public class Visit extends BaseEntity {
         if (this == o) return true;
         if (!(o instanceof Visit)) return false;
         Visit visit = (Visit) o;
-        return Objects.equals(date, visit.date) &&
+        return Objects.equals(dateTime, visit.dateTime) &&
                 Objects.equals(description, visit.description) &&
                 Objects.equals(owner, visit.owner) &&
                 Objects.equals(pet, visit.pet);
@@ -61,14 +61,14 @@ public class Visit extends BaseEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(date, description, owner, pet);
+        return Objects.hash(dateTime, description, owner, pet);
     }
 
     @Override
     public String toString() {
         return "Visit{" +
                 "id=" + getId() +
-                ", date=" + date +
+                ", date=" + dateTime +
                 ", description='" + description + '\'' +
                 ", owner=" + owner +
                 ", pet=" + pet +

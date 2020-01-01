@@ -39,7 +39,7 @@ public class VisitServiceJpa implements VisitService {
     public Visit save(Visit visit) {
         log.debug(className + " - save for object: " + visit);
         requireNonNull(visit);
-        requireNonNull(visit.getDate());
+        requireNonNull(visit.getDateTime());
         requireNonNull(visit.getPet());
         requireNonNull(visit.getPet().getId());
         requireNonNull(visit.getPet().getOwner());

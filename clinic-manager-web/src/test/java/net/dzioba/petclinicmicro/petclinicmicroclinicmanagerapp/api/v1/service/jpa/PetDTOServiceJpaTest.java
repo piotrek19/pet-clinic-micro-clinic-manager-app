@@ -1,4 +1,4 @@
-package net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.service;
+package net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.service.jpa;
 
 import net.dzioba.petclinicmicro.common.model.PetDTO;
 import net.dzioba.petclinicmicro.common.model.PetTypeDTO;
@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class PetDTOServiceTest {
+class PetDTOServiceJpaTest {
 
     private static final Long PET1_ID = 11L;
     private static final String PET1_NAME = "PET1_NAME";
@@ -31,7 +31,7 @@ class PetDTOServiceTest {
     private static final Long PET_TYPE_ID = 21L;
 
     @InjectMocks
-    private PetDTOService petDTOService;    // class under test
+    private PetDTOServiceJpa petDTOService;    // class under test
 
     @Mock
     private PetService petService;

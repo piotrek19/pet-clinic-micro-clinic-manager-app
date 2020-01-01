@@ -14,7 +14,7 @@ public class PetDTOController {
 
     public static final String BASE_URL = "/api/v1/owners/{ownerId}/pets";
 
-    private final PetDTOService petDTOService;
+    private final net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.service.PetDTOService petDTOService;
 
     @Autowired
     public PetDTOController(PetDTOService petDTOService) {
