@@ -743,11 +743,17 @@
   "description" : "possible visit details"
 };
             defs.PossibleVisitListDTO = {
-  "type" : "array",
-  "description" : "List of possible visit terms",
-  "items" : {
-    "$ref" : "#/components/schemas/PossibleVisitDTO"
-  }
+  "type" : "object",
+  "properties" : {
+    "possibleVisits" : {
+      "type" : "array",
+      "description" : "list of possible visit terms",
+      "items" : {
+        "$ref" : "#/components/schemas/PossibleVisitDTO"
+      }
+    }
+  },
+  "description" : "object containing list of possible visit term"
 };
             defs.RoomShortDTO = {
   "required" : [ "id" ],
