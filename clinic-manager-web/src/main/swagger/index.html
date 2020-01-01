@@ -726,6 +726,7 @@
   "description" : "short information set realted to the Pet"
 };
             defs.PossibleVisitDTO = {
+  "required" : [ "id", "room", "vet" ],
   "type" : "object",
   "properties" : {
     "dateTime" : {
@@ -750,12 +751,18 @@
   }
 };
             defs.RoomShortDTO = {
+  "required" : [ "id" ],
   "type" : "object",
   "properties" : {
     "id" : {
       "type" : "string",
-      "description" : "identifier of the Room",
+      "description" : "identifier",
       "format" : "uuid"
+    },
+    "name" : {
+      "type" : "string",
+      "description" : "room name",
+      "example" : "PAW patrol"
     }
   },
   "description" : "short information set realted to the Room"
