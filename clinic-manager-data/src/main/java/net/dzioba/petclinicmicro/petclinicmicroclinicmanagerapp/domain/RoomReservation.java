@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -17,12 +16,12 @@ import java.util.Objects;
 @Table(name = "room_reservation")
 public class RoomReservation extends BaseEntity {
 
-    @Column(name = "dateTime")
-    private LocalDateTime dateTime;
-
     @ManyToOne
     @JoinColumn(name = "room_daily_reservation")
     private RoomDailyReservation roomDailyReservation;
+
+    @Column(name = "reservation_start")
+    private RoomReservationStart reservationStart;
 
     @OneToOne
     @JoinColumn(name = "visit_id")
@@ -33,21 +32,21 @@ public class RoomReservation extends BaseEntity {
         if (this == o) return true;
         if (!(o instanceof RoomReservation)) return false;
         RoomReservation that = (RoomReservation) o;
-        return Objects.equals(dateTime, that.dateTime) &&
-                Objects.equals(roomDailyReservation, that.roomDailyReservation) &&
+        return Objects.equals(roomDailyReservation, that.roomDailyReservation) &&
+                Objects.equals(reservationStart, that.reservationStart) &&
                 Objects.equals(visit, that.visit);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dateTime, roomDailyReservation, visit);
+        return Objects.hash(roomDailyReservation, reservationStart, visit);
     }
 
     @Override
     public String toString() {
         return "RoomReservation{" +
                 "id=" + getId() +
-                ", dateTime=" + dateTime +
+                ", reservationStart=" + reservationStart +
                 ", roomDailyReservation=" + roomDailyReservation +
                 ", visit=" + visit +
                 '}';
