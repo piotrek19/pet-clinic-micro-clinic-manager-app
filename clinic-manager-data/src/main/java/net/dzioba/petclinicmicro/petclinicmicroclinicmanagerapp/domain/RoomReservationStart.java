@@ -1,7 +1,10 @@
 package net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain;
 
+import lombok.Getter;
+
 import java.time.LocalTime;
 
+@Getter
 public enum RoomReservationStart {
 
     _0900(LocalTime.of(9, 0)),
@@ -13,7 +16,7 @@ public enum RoomReservationStart {
     _1200(LocalTime.of(12, 0)),
     _1230(LocalTime.of(12, 30));
 
-    final LocalTime time;
+    private final LocalTime time;
 
     RoomReservationStart(LocalTime time){
         this.time = time;

@@ -20,6 +20,10 @@ public class RoomReservation extends BaseEntity {
     @JoinColumn(name = "room_daily_reservation")
     private RoomDailyReservation roomDailyReservation;
 
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    private Room room;
+
     @Column(name = "reservation_start")
     private RoomReservationStart reservationStart;
 
@@ -33,13 +37,14 @@ public class RoomReservation extends BaseEntity {
         if (!(o instanceof RoomReservation)) return false;
         RoomReservation that = (RoomReservation) o;
         return Objects.equals(roomDailyReservation, that.roomDailyReservation) &&
+                Objects.equals(room, that.room) &&
                 Objects.equals(reservationStart, that.reservationStart) &&
                 Objects.equals(visit, that.visit);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(roomDailyReservation, reservationStart, visit);
+        return Objects.hash(roomDailyReservation, room, reservationStart, visit);
     }
 
     @Override

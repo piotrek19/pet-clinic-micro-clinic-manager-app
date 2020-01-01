@@ -5,9 +5,12 @@ import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain.RoomDaily
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public interface RoomDailyReservationRepository extends JpaRepository<RoomDailyReservation, Long> {
 
     RoomDailyReservation findByRoomAndDate(Room room, LocalDate date);
+
+    List<RoomDailyReservation> findByDate(LocalDate date);
 
 }
