@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -31,4 +32,29 @@ public class RoomDailyReservation extends BaseEntity {
 
     @OneToMany(mappedBy = "roomDailyReservation")
     private List<RoomReservation> roomReservations = new ArrayList<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RoomDailyReservation)) return false;
+        RoomDailyReservation that = (RoomDailyReservation) o;
+        return Objects.equals(room, that.room) &&
+                Objects.equals(date, that.date) &&
+                Objects.equals(vet, that.vet);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(room, date, vet);
+    }
+
+    @Override
+    public String toString() {
+        return "RoomDailyReservation{" +
+                "id=" + getId() +
+                ", room=" + room +
+                ", date=" + date +
+                ", vet=" + vet +
+                '}';
+    }
 }
