@@ -710,12 +710,17 @@
   "description" : "short information set realted to the Owner"
 };
             defs.PetShortDTO = {
+  "required" : [ "id" ],
   "type" : "object",
   "properties" : {
     "id" : {
       "type" : "string",
-      "description" : "identifier of the Pet",
+      "description" : "identifier",
       "format" : "uuid"
+    },
+    "name" : {
+      "type" : "string",
+      "description" : "name"
     }
   },
   "description" : "short information set realted to the Pet"
