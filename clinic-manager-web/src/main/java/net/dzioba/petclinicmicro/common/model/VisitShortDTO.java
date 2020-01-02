@@ -1,5 +1,6 @@
 package net.dzioba.petclinicmicro.common.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,9 @@ import java.time.LocalDateTime;
 @Builder
 public class VisitShortDTO {
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dateTime;
+
     private VetShortDTO vet;
     private RoomReservationShortDTO roomReservation;
 

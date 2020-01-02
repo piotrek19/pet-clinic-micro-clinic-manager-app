@@ -106,8 +106,8 @@ public class DataLoader implements CommandLineRunner {
         Room room1 = Room.builder().name("PAW Patrol").description("room description").mainVet(vet1).build();
         roomService.save(room1);
 
-        Room room2 = Room.builder().name("Smerfs Village").description("room description").mainVet(vet2).build();
-        roomService.save(room1);
+        Room room2 = Room.builder().name("SMURFS Village").description("room description").mainVet(vet2).build();
+        roomService.save(room2);
 
         Visit visit1 = new Visit();
         visit1.setDateTime(LocalDateTime.of(2020, 10, 30, 13, 0));

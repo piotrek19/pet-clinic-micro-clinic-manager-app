@@ -1,9 +1,6 @@
 package net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -35,6 +32,18 @@ public class RoomDailyReservation extends BaseEntity {
 
     @OneToMany(mappedBy = "roomDailyReservation")
     private List<RoomReservation> roomReservations = new ArrayList<>();
+
+    @Builder
+    public RoomDailyReservation(Long id, Room room, LocalDate date, Vet vet, List<RoomReservation> roomReservations) {
+        super(id);
+        this.room = room;
+        this.date = date;
+        this.vet = vet;
+
+        if (roomReservations != null) {
+            this.roomReservations = roomReservations;
+        }
+    }
 
     @Override
     public boolean equals(Object o) {

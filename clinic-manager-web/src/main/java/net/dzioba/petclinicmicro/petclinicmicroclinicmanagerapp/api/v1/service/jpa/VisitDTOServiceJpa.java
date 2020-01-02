@@ -8,16 +8,20 @@ import net.dzioba.petclinicmicro.common.model.VisitShortDTO;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.mapper.RoomDailyReservationShortMapper;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.mapper.VetShortMapper;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.service.VisitDTOService;
-import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain.RoomReservation;
+import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain.Room;
+import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain.RoomDailyReservation;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain.RoomReservationStart;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.service.RoomDailyReservationService;
+import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.service.RoomService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
@@ -27,6 +31,7 @@ import static java.util.Objects.requireNonNull;
 public class VisitDTOServiceJpa implements VisitDTOService {
 
     private final RoomDailyReservationService roomDailyReservationService;
+    private final RoomService roomService;
 
     private final VetShortMapper vetShortMapper;
     private final RoomDailyReservationShortMapper roomDailyReservationShortMapper;
@@ -34,27 +39,33 @@ public class VisitDTOServiceJpa implements VisitDTOService {
 
 
     @Override
+    @Transactional
     public PossibleVisitListDTO findPossibleVisitsForDate(LocalDate visitDate) {
-        log.debug(className + "- findPossibleVisitsForDate for date: " + visitDate);
+        log.debug(className + " - findPossibleVisitsForDate for date: " + visitDate);
         requireNonNull(visitDate);
+
         List<VisitShortDTO> visitShortDTOList = new ArrayList<>();
 
-        // there is at least one visit planed for this date, so use the same room/vet (roomDailyReservation) for propositions:
-        roomDailyReservationService.findByDate(visitDate).forEach((roomDailyReservation)->{
-            log.debug(className + "- findPossibleVisitsForDate - using existing roomDailyReservation for processing" );
+        List<RoomDailyReservation> roomDailyReservations = roomDailyReservationService.findByDate(visitDate);
+        List<Room> roomsUsed = roomDailyReservations.stream().map((RoomDailyReservation::getRoom)).collect(Collectors.toList());
+        List<Room> roomsUnused = roomService.findAll();
+        roomsUnused.removeAll(roomsUsed);
+
+        // there is at least one visit planed for concrete room/vet, so using the same room/vet (roomDailyReservation) propose related terms:
+        roomDailyReservations.forEach((roomDailyReservation)->{
+            log.debug(className + " - findPossibleVisitsForDate - using existing roomDailyReservation for processing" );
             EnumSet<RoomReservationStart> possibleReservationStarts = EnumSet.allOf(RoomReservationStart.class);
 
-            List<RoomReservation> roomReservations = roomDailyReservation.getRoomReservations();
-            roomReservations.forEach((roomReservation -> {
+            roomDailyReservation.getRoomReservations().forEach((roomReservation -> {
                 possibleReservationStarts.remove(roomReservation.getReservationStart());
             }));
-
 
             possibleReservationStarts.forEach((possibleReservationStart) ->{
                 VisitShortDTO visitShortDTO = VisitShortDTO.builder()
                         .dateTime(LocalDateTime.of(visitDate, possibleReservationStart.getTime()))
                         .roomReservation(RoomReservationShortDTO.builder()
-                                .roomDailyReservation(roomDailyReservationShortMapper.roomDailyReservationToRoomDailyReservationShortDTO(roomDailyReservation))
+                                .roomDailyReservation(roomDailyReservationShortMapper
+                                        .roomDailyReservationToRoomDailyReservationShortDTO(roomDailyReservation))
                                 .build())
                         .vet(vetShortMapper.vetToVetShortDTO(roomDailyReservation.getVet()))
                         .build();
@@ -64,14 +75,30 @@ public class VisitDTOServiceJpa implements VisitDTOService {
 
         });
 
-        // there is no visits planed for this date, so take first accessible room/vet and propose related terms:
-        if (visitShortDTOList.isEmpty()){
-            log.debug(className + "- findPossibleVisitsForDate - creating roomDailyReservation for processing" );
-            //todo: implementation needed
+        // there is at least one room/vet with no visits planed so far, so take it and propose related terms:
+        if (! roomsUnused.isEmpty()){
+            log.debug(className + " - findPossibleVisitsForDate - using new roomDailyReservation for processing" );
+
+            roomsUnused.forEach((room -> {
+
+                EnumSet<RoomReservationStart> possibleReservationStarts = EnumSet.allOf(RoomReservationStart.class);
+                possibleReservationStarts.forEach((possibleReservationStart) ->{
+                    VisitShortDTO visitShortDTO = VisitShortDTO.builder()
+                            .dateTime(LocalDateTime.of(visitDate, possibleReservationStart.getTime()))
+                            .roomReservation(RoomReservationShortDTO.builder().roomDailyReservation(roomDailyReservationShortMapper
+                                            .roomDailyReservationToRoomDailyReservationShortDTO(RoomDailyReservation.builder()
+                                                    .room(room).date(visitDate).build())).build())
+                            .vet(vetShortMapper.vetToVetShortDTO(room.getMainVet()))
+                            .build();
+
+                    visitShortDTOList.add(visitShortDTO);
+                });
+
+            }));
+
         }
 
-        return PossibleVisitListDTO.builder()
-                .possibleVisits(visitShortDTOList)
-                .build();
+        log.debug(className + " - findPossibleVisitsForDate - returning list of possible visits - list has size: " + visitShortDTOList.size());
+        return PossibleVisitListDTO.builder().possibleVisits(visitShortDTOList).build();
     }
 }
