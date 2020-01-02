@@ -1,4 +1,4 @@
-package net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.service.common;
+package net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.service;
 
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain.BaseEntity;
 

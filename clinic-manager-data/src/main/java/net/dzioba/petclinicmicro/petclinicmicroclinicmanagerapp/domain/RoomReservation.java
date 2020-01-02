@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Getter
@@ -16,10 +17,12 @@ import java.util.Objects;
 @Table(name = "room_reservation")
 public class RoomReservation extends BaseEntity {
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "room_daily_reservation")
     private RoomDailyReservation roomDailyReservation;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;

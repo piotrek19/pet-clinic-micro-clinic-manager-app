@@ -2,7 +2,6 @@ package net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.service.jpa;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain.Room;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain.RoomDailyReservation;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.repository.RoomDailyReservationRepository;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.service.RoomDailyReservationService;
@@ -25,32 +24,43 @@ public class RoomDailyReservationServiceJpa implements RoomDailyReservationServi
 
     @Override
     public List<RoomDailyReservation> findAll() {
+        log.debug(className + " - findAll - retrieving all records intentionally NOT implemented");
+
         return null;
     }
 
     @Override
     public Optional<RoomDailyReservation> findById(Long id) {
-        return Optional.empty();
+        log.debug(className + " - findById for id: " + id);
+        requireNonNull(id);
+
+        return roomDailyReservationRepository.findById(id);
     }
 
     @Override
-    public RoomDailyReservation save(RoomDailyReservation object) {
-        return null;
+    public RoomDailyReservation save(RoomDailyReservation roomDailyReservation) {
+        log.debug(className + " - save for object: " + roomDailyReservation);
+        requireNonNull(roomDailyReservation);
+        requireNonNull(roomDailyReservation.getRoom());
+        requireNonNull(roomDailyReservation.getDate());
+
+        return roomDailyReservationRepository.save(roomDailyReservation);
     }
 
     @Override
     public void deleteById(Long id) {
+        log.debug(className + " - deleteById for id: " + id);
+        requireNonNull(id);
 
+        roomDailyReservationRepository.deleteById(id);
     }
 
     @Override
-    public void delete(RoomDailyReservation object) {
+    public void delete(RoomDailyReservation roomDailyReservation) {
+        log.debug(className + " - delete for object: " + roomDailyReservation);
+        requireNonNull(roomDailyReservation);
 
-    }
-
-    @Override
-    public RoomDailyReservation findByRoomAndDate(Room room, LocalDate date) {
-        return null;
+        roomDailyReservationRepository.delete(roomDailyReservation);
     }
 
     @Override

@@ -3,6 +3,8 @@ package net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Getter
@@ -13,9 +15,12 @@ import java.util.Objects;
 @Table(name = "room")
 public class Room extends BaseEntity {
 
+    @NotBlank
+    @Size(max=255)
     @Column(name = "name")
     private String name;
 
+    @Size(max=255)
     @Column(name = "description")
     private String description;
 

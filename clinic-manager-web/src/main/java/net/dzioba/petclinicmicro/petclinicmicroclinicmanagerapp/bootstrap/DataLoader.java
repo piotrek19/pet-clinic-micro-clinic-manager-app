@@ -1,15 +1,16 @@
 package net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.bootstrap;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain.*;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@RequiredArgsConstructor
 @Slf4j
 @Component
 public class DataLoader implements CommandLineRunner {
@@ -19,15 +20,7 @@ public class DataLoader implements CommandLineRunner {
     private final PetTypeService petTypeService;
     private final SpecialityService specialityService;
     private final VisitService visitService;
-
-    @Autowired
-    public DataLoader(OwnerService ownerService, VetService vetService, PetTypeService petTypeService, SpecialityService specialityService, VisitService visitService) {
-        this.ownerService = ownerService;
-        this.vetService = vetService;
-        this.petTypeService = petTypeService;
-        this.specialityService = specialityService;
-        this.visitService = visitService;
-    }
+    private final RoomService roomService;
 
     @Override
     public void run(String... args) throws Exception {
@@ -35,7 +28,7 @@ public class DataLoader implements CommandLineRunner {
             saveData();
         }
         else {
-            log.debug("No need to load data.");
+            log.debug("No need to load data");
         }
     }
 
@@ -44,7 +37,7 @@ public class DataLoader implements CommandLineRunner {
     }
 
     private void saveData() {
-        log.debug("Loading data process started...");
+        log.debug("Loading data process started");
         PetType dogPetType = new PetType();
         dogPetType.setName("dog");
         dogPetType = petTypeService.save(dogPetType);
@@ -53,7 +46,7 @@ public class DataLoader implements CommandLineRunner {
         catPetType.setName("cat");
         catPetType = petTypeService.save(catPetType);
 
-        log.debug("Loaded data: PetTypes...");
+        log.debug("Loaded data: PetTypes");
 
         Pet michaelsDog = new Pet();
         michaelsDog.setBirthDate(LocalDate.of(2017, 7, 3));
@@ -81,7 +74,7 @@ public class DataLoader implements CommandLineRunner {
         fionasCat = owner2.addPet(fionasCat);
         owner2 = ownerService.save(owner2);
 
-        log.debug("Loaded data: Owners and Pets...");
+        log.debug("Loaded data: Owners and Pets");
 
         Speciality radiologySpeciality = new Speciality();
         radiologySpeciality.setDescription("radiology");
@@ -108,7 +101,13 @@ public class DataLoader implements CommandLineRunner {
         vet2.addSpeciality(dentistSpeciality);
         vet2 = vetService.save(vet2);
 
-        log.debug("Loaded data: Vets...");
+        log.debug("Loaded data: Vets");
+
+        Room room1 = Room.builder().name("PAW Patrol").description("room description").mainVet(vet1).build();
+        roomService.save(room1);
+
+        Room room2 = Room.builder().name("Smerfs Village").description("room description").mainVet(vet2).build();
+        roomService.save(room1);
 
         Visit visit1 = new Visit();
         visit1.setDateTime(LocalDateTime.of(2020, 10, 30, 13, 0));
@@ -128,6 +127,6 @@ public class DataLoader implements CommandLineRunner {
         visit3.setPet(michaelsDog);
         visit3 = visitService.save(visit3);
 
-        log.debug("Loaded data: Visits...");
+        log.debug("Loaded data: Visits");
     }
 }

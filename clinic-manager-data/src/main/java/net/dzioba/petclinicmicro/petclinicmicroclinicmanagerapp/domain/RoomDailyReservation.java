@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +20,12 @@ import java.util.Objects;
 @Table(name = "room_daily_reservation")
 public class RoomDailyReservation extends BaseEntity {
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
 
+    @NotNull
     @Column(name = "date")
     private LocalDate date;
 

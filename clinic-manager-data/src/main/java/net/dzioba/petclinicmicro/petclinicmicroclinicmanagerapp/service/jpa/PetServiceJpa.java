@@ -22,14 +22,14 @@ public class PetServiceJpa implements PetService {
 
     @Override
     public List<Pet> findAll() {
-        log.debug(className + "- findAll - retrieving all records");
+        log.debug(className + " - findAll - retrieving all records");
 
         return petRepository.findAll();
     }
 
     @Override
     public Optional<Pet> findById(Long id) {
-        log.debug(className + "- findById for id: " + id);
+        log.debug(className + " - findById for id: " + id);
         requireNonNull(id);
 
         return petRepository.findById(id);
