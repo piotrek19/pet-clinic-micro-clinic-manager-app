@@ -3,13 +3,12 @@ package net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.controll
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dzioba.petclinicmicro.common.model.PossibleVisitListDTO;
+import net.dzioba.petclinicmicro.common.model.VisitDTO;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.service.VisitDTOService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -32,6 +31,16 @@ public class VisitDTOController {
         PossibleVisitListDTO possibleVisitListDTO = visitDTOService.findPossibleVisitsForDate(date);
 
         return ResponseEntity.ok(possibleVisitListDTO);
+    }
+
+    @PostMapping
+    public ResponseEntity<VisitDTO> scheduleThisVisit(@RequestBody VisitDTO visitDTO){
+        log.debug(className + " - scheduleThisVisit for object: " + visitDTO);
+
+        VisitDTO savedVisit = visitDTOService.scheduleThisVisit(visitDTO);
+
+        return ResponseEntity.created(URI.create(BASE_URL + "/" + savedVisit.getId()))
+                .body(savedVisit);
     }
 
 }

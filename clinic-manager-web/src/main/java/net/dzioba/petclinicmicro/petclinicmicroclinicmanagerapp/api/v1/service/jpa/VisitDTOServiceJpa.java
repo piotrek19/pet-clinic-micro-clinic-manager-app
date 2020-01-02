@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dzioba.petclinicmicro.common.model.PossibleVisitListDTO;
 import net.dzioba.petclinicmicro.common.model.RoomReservationShortDTO;
+import net.dzioba.petclinicmicro.common.model.VisitDTO;
 import net.dzioba.petclinicmicro.common.model.VisitShortDTO;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.mapper.RoomDailyReservationShortMapper;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.mapper.VetShortMapper;
@@ -101,4 +102,11 @@ public class VisitDTOServiceJpa implements VisitDTOService {
         log.debug(className + " - findPossibleVisitsForDate - returning list of possible visits - list has size: " + visitShortDTOList.size());
         return PossibleVisitListDTO.builder().possibleVisits(visitShortDTOList).build();
     }
+
+    @Override
+    public VisitDTO scheduleThisVisit(VisitDTO visitDTO) {
+        return null;
+    }
+
+
 }
