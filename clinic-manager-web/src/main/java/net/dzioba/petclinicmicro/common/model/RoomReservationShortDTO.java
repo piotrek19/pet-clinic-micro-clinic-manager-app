@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class RoomReservationShortDTO {
 
-    private RoomDailyReservationShortDTO roomDailyReservation;
+    private RoomShortDTO room;
 
 }

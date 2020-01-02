@@ -7,6 +7,7 @@ import net.dzioba.petclinicmicro.common.model.RoomReservationShortDTO;
 import net.dzioba.petclinicmicro.common.model.VisitDTO;
 import net.dzioba.petclinicmicro.common.model.VisitShortDTO;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.mapper.RoomDailyReservationShortMapper;
+import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.mapper.RoomShortMapper;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.mapper.VetShortMapper;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.service.VisitDTOService;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain.Room;
@@ -36,6 +37,7 @@ public class VisitDTOServiceJpa implements VisitDTOService {
 
     private final VetShortMapper vetShortMapper;
     private final RoomDailyReservationShortMapper roomDailyReservationShortMapper;
+    private final RoomShortMapper roomShortMapper;
     private final String className = VisitDTOServiceJpa.class.getName();
 
 
@@ -65,8 +67,7 @@ public class VisitDTOServiceJpa implements VisitDTOService {
                 VisitShortDTO visitShortDTO = VisitShortDTO.builder()
                         .dateTime(LocalDateTime.of(visitDate, possibleReservationStart.getTime()))
                         .roomReservation(RoomReservationShortDTO.builder()
-                                .roomDailyReservation(roomDailyReservationShortMapper
-                                        .roomDailyReservationToRoomDailyReservationShortDTO(roomDailyReservation))
+                                .room(roomShortMapper.roomToRoomShortDTO(roomDailyReservation.getRoom()))
                                 .build())
                         .vet(vetShortMapper.vetToVetShortDTO(roomDailyReservation.getVet()))
                         .build();
@@ -86,9 +87,9 @@ public class VisitDTOServiceJpa implements VisitDTOService {
                 possibleReservationStarts.forEach((possibleReservationStart) ->{
                     VisitShortDTO visitShortDTO = VisitShortDTO.builder()
                             .dateTime(LocalDateTime.of(visitDate, possibleReservationStart.getTime()))
-                            .roomReservation(RoomReservationShortDTO.builder().roomDailyReservation(roomDailyReservationShortMapper
-                                            .roomDailyReservationToRoomDailyReservationShortDTO(RoomDailyReservation.builder()
-                                                    .room(room).date(visitDate).build())).build())
+                            .roomReservation(RoomReservationShortDTO.builder()
+                                    .room(roomShortMapper.roomToRoomShortDTO(room))
+                                    .build())
                             .vet(vetShortMapper.vetToVetShortDTO(room.getMainVet()))
                             .build();
 
@@ -105,6 +106,37 @@ public class VisitDTOServiceJpa implements VisitDTOService {
 
     @Override
     public VisitDTO scheduleThisVisit(VisitDTO visitDTO) {
+        log.debug(className + " - scheduleThisVisit for object: " + visitDTO);
+        requireNonNull(visitDTO);
+        requireNonNull(visitDTO.getDateTime());
+        requireNonNull(visitDTO.getOwner());
+        requireNonNull(visitDTO.getPet());
+        requireNonNull(visitDTO.getVet());
+        requireNonNull(visitDTO.getRoomReservation());
+
+        LocalDateTime dateTime = visitDTO.getDateTime();
+        List<RoomDailyReservation> roomDailyReservations = roomDailyReservationService.findByDate(dateTime.toLocalDate());
+
+        // roomDailyReservation exist in db
+        roomDailyReservations.stream().filter(roomDailyReservation -> roomDailyReservation.getRoom().getId()
+                .equals(visitDTO.getRoomReservation().getRoom().getId())
+        ).findAny().ifPresent(roomDailyReservation -> {
+
+            // createRoomReservation() invocation
+
+            // createVisit() invocation
+            // and return
+        });
+
+        // roomDailyReservation doesn't exist in db - create one:
+        // createRoomDailyReservation() invocation
+
+        // createRoomReservation() invocation
+
+        // createVisit() invocation
+
+        // and return
+
         return null;
     }
 

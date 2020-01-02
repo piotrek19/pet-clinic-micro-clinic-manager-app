@@ -20,7 +20,7 @@ public class VisitDTO {
 
     @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime date;
+    private LocalDateTime dateTime;
 
     @Size(max=255)
     private String description;
@@ -33,5 +33,8 @@ public class VisitDTO {
 
     @NotNull
     private VetShortDTO vet;
+
+    @NotNull
+    private RoomReservationShortDTO roomReservation;
 
 }
