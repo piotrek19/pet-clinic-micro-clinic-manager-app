@@ -736,11 +736,27 @@
     "vet" : {
       "$ref" : "#/components/schemas/VetShortDTO"
     },
-    "room" : {
-      "$ref" : "#/components/schemas/RoomShortDTO"
+    "roomReservation" : {
+      "$ref" : "#/components/schemas/PossibleVisitDTO_roomReservation"
     }
   },
   "description" : "possible visit details"
+};
+            defs.PossibleVisitDTO_roomReservation = {
+  "type" : "object",
+  "properties" : {
+    "roomDailyReservation" : {
+      "$ref" : "#/components/schemas/PossibleVisitDTO_roomReservation_roomDailyReservation"
+    }
+  }
+};
+            defs.PossibleVisitDTO_roomReservation_roomDailyReservation = {
+  "type" : "object",
+  "properties" : {
+    "room" : {
+      "$ref" : "#/components/schemas/RoomShortDTO"
+    }
+  }
 };
             defs.PossibleVisitListDTO = {
   "type" : "object",
