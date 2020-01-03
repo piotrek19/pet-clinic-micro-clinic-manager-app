@@ -138,9 +138,9 @@ public class VisitDTOServiceJpa implements VisitDTOService {
                 }
         }
 
-        RoomReservation roomReservation  = createRoomReservation(roomDailyReservation, visitDTO);
+        RoomReservation roomReservation  = saveRoomReservation(roomDailyReservation, visitDTO);
 
-        Visit visit = createVisit(roomReservation, visitDTO);
+        Visit visit = saveVisit(roomReservation, visitDTO);
 
         return visitMapper.visitToVisitDTO(visit);
     }
@@ -156,7 +156,7 @@ public class VisitDTOServiceJpa implements VisitDTOService {
     }
 
     @Transactional
-    public Visit createVisit(RoomReservation roomReservation, VisitDTO visitDTO) {
+    public Visit saveVisit(RoomReservation roomReservation, VisitDTO visitDTO) {
         requireNonNull(roomReservation);
         requireNonNull(visitDTO);
 
@@ -180,13 +180,13 @@ public class VisitDTOServiceJpa implements VisitDTOService {
     }
 
     @Transactional
-    public RoomReservation createRoomReservation(RoomDailyReservation roomDailyReservation, VisitDTO visitDTO) {
+    public RoomReservation saveRoomReservation(RoomDailyReservation roomDailyReservation, VisitDTO visitDTO) {
         requireNonNull(roomDailyReservation);
         requireNonNull(visitDTO);
 
         RoomReservation newRoomReservation = RoomReservation
                 .builder()
-                .visit(new Visit()) //todo: tbc
+                .visit(new Visit())
                 .reservationStart(RoomReservationStart.getFromLocalTime(visitDTO.getDateTime().toLocalTime()))
                 .roomDailyReservation(roomDailyReservation)
                 .room(roomDailyReservation.getRoom())
@@ -195,7 +195,8 @@ public class VisitDTOServiceJpa implements VisitDTOService {
         return roomReservationService.save(newRoomReservation);
     }
 
-    private RoomDailyReservation saveRoomDailyReservation(VisitDTO visitDTO) {
+    @Transactional
+    public RoomDailyReservation saveRoomDailyReservation(VisitDTO visitDTO) {
         requireNonNull(visitDTO);
 
         RoomDailyReservation newRoomDailyReservation = RoomDailyReservation
@@ -208,6 +209,5 @@ public class VisitDTOServiceJpa implements VisitDTOService {
         RoomDailyReservation savedRoomDailyReservation = roomDailyReservationService.save(newRoomDailyReservation);
         return savedRoomDailyReservation;
     }
-
 
 }
