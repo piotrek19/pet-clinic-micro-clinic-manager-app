@@ -3,6 +3,7 @@ package net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain;
 import lombok.Getter;
 
 import java.time.LocalTime;
+import java.util.Arrays;
 
 @Getter
 public enum RoomReservationStart {
@@ -20,5 +21,10 @@ public enum RoomReservationStart {
 
     RoomReservationStart(LocalTime time){
         this.time = time;
+    }
+
+    public static RoomReservationStart getFromLocalTime(LocalTime localTime){
+        return Arrays.stream(RoomReservationStart.values())
+                .filter(roomReservationStart -> roomReservationStart.time.equals(localTime)).findAny().orElse(null);
     }
 }

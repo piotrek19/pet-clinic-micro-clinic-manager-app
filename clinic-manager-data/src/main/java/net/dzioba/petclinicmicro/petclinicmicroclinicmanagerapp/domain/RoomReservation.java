@@ -1,9 +1,6 @@
 package net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -27,12 +24,22 @@ public class RoomReservation extends BaseEntity {
     @JoinColumn(name = "room_id")
     private Room room;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "reservation_start")
     private RoomReservationStart reservationStart;
 
     @OneToOne
     @JoinColumn(name = "visit_id")
     private Visit visit;
+
+    @Builder
+    public RoomReservation(Long id, RoomDailyReservation roomDailyReservation, Room room, RoomReservationStart reservationStart, Visit visit) {
+        super(id);
+        this.roomDailyReservation = roomDailyReservation;
+        this.room = room;
+        this.reservationStart = reservationStart;
+        this.visit = visit;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -37,6 +37,9 @@ public class DataLoader implements CommandLineRunner {
     }
 
     private void saveData() {
+
+        // todo: add room reservation related data saving
+
         log.debug("Loading data process started");
         PetType dogPetType = new PetType();
         dogPetType.setName("dog");
@@ -113,18 +116,24 @@ public class DataLoader implements CommandLineRunner {
         visit1.setDateTime(LocalDateTime.of(2020, 10, 30, 13, 0));
         visit1.setDescription("Occasional visit");
         visit1.setPet(fionasCat);
+        visit1.setOwner(owner2);
+        visit1.setVet(vet1);
         visit1 = visitService.save(visit1);
 
         Visit visit2 = new Visit();
         visit2.setDateTime(LocalDateTime.of(2021, 10, 30, 13, 0));
         visit2.setDescription("Another occasional visit");
         visit2.setPet(fionasCat);
+        visit1.setOwner(owner2);
+        visit1.setVet(vet2);
         visit2 = visitService.save(visit2);
 
         Visit visit3 = new Visit();
         visit3.setDateTime(LocalDateTime.of(2019, 10, 14, 10, 30));
         visit3.setDescription("Not really know why");
         visit3.setPet(michaelsDog);
+        visit1.setOwner(owner1);
+        visit1.setVet(vet1);
         visit3 = visitService.save(visit3);
 
         log.debug("Loaded data: Visits");

@@ -40,12 +40,14 @@ public class Visit extends BaseEntity {
     private RoomReservation roomReservation;
 
     @Builder
-    public Visit(Long id, LocalDateTime dateTime, String description, Owner owner, Pet pet) {
+    public Visit(Long id, LocalDateTime dateTime, String description, Owner owner, Pet pet, Vet vet, RoomReservation roomReservation) {
         super(id);
         this.dateTime = dateTime;
         this.description = description;
         this.owner = owner;
         this.pet = pet;
+        this.vet = vet;
+        this.roomReservation = roomReservation;
     }
 
     @Override

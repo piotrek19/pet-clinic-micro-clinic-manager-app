@@ -9,12 +9,10 @@ import net.dzioba.petclinicmicro.common.model.VisitShortDTO;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.mapper.RoomDailyReservationShortMapper;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.mapper.RoomShortMapper;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.mapper.VetShortMapper;
+import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.mapper.VisitMapper;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.api.v1.service.VisitDTOService;
-import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain.Room;
-import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain.RoomDailyReservation;
-import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain.RoomReservationStart;
-import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.service.RoomDailyReservationService;
-import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.service.RoomService;
+import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain.*;
+import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.service.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,11 +31,17 @@ import static java.util.Objects.requireNonNull;
 public class VisitDTOServiceJpa implements VisitDTOService {
 
     private final RoomDailyReservationService roomDailyReservationService;
+    private final RoomReservationService roomReservationService;
     private final RoomService roomService;
+    private final VetService vetService;
+    private final OwnerService ownerService;
+    private final PetService petService;
+    private final VisitService visitService;
 
-    private final VetShortMapper vetShortMapper;
     private final RoomDailyReservationShortMapper roomDailyReservationShortMapper;
     private final RoomShortMapper roomShortMapper;
+    private final VetShortMapper vetShortMapper;
+    private final VisitMapper visitMapper;
     private final String className = VisitDTOServiceJpa.class.getName();
 
 
@@ -104,6 +108,7 @@ public class VisitDTOServiceJpa implements VisitDTOService {
         return PossibleVisitListDTO.builder().possibleVisits(visitShortDTOList).build();
     }
 
+    @Transactional
     @Override
     public VisitDTO scheduleThisVisit(VisitDTO visitDTO) {
         log.debug(className + " - scheduleThisVisit for object: " + visitDTO);
@@ -117,27 +122,79 @@ public class VisitDTOServiceJpa implements VisitDTOService {
         LocalDateTime dateTime = visitDTO.getDateTime();
         List<RoomDailyReservation> roomDailyReservations = roomDailyReservationService.findByDate(dateTime.toLocalDate());
 
-        // roomDailyReservation exist in db
-        roomDailyReservations.stream().filter(roomDailyReservation -> roomDailyReservation.getRoom().getId()
-                .equals(visitDTO.getRoomReservation().getRoom().getId())
-        ).findAny().ifPresent(roomDailyReservation -> {
+        RoomDailyReservation roomDailyReservation = roomDailyReservations.stream().filter(rDR -> rDR.getRoom().getId()
+                .equals(visitDTO.getRoomReservation().getRoom().getId()))
+                 .findAny().orElse(null);
 
-            // createRoomReservation() invocation
+        if (roomDailyReservation != null) {
+            // roomDailyReservation exist in db case:
+            RoomReservation roomReservation  = createRoomReservation(roomDailyReservation, visitDTO);
 
-            // createVisit() invocation
-            // and return
-        });
+            Visit visit = createVisit(roomReservation, visitDTO);
+            return visitMapper.visitToVisitDTO(visit);
+        }
 
-        // roomDailyReservation doesn't exist in db - create one:
-        // createRoomDailyReservation() invocation
+        // roomDailyReservation doesn't exist in db case:
+        roomDailyReservation = saveRoomDailyReservation(visitDTO);
 
-        // createRoomReservation() invocation
+        RoomReservation roomReservation  = createRoomReservation(roomDailyReservation, visitDTO);
 
-        // createVisit() invocation
+        Visit visit = createVisit(roomReservation, visitDTO);
+        return visitMapper.visitToVisitDTO(visit);
+    }
 
-        // and return
+    @Transactional
+    public Visit createVisit(RoomReservation roomReservation, VisitDTO visitDTO) {
+        requireNonNull(roomReservation);
+        requireNonNull(visitDTO);
 
-        return null;
+        Visit newVisit = Visit
+                .builder()
+                .dateTime(visitDTO.getDateTime())
+                .owner(ownerService.findById(visitDTO.getOwner().getId()).orElseThrow(IllegalArgumentException::new))
+                .pet(petService.findById(visitDTO.getPet().getId()).orElseThrow(IllegalArgumentException::new))
+                .vet(vetService.findById(visitDTO.getVet().getId()).orElseThrow(IllegalArgumentException::new))
+                .roomReservation(roomReservationService.findById(roomReservation.getId()).orElseThrow(IllegalArgumentException::new))
+                .description(visitDTO.getDescription())
+                .build();
+
+        Visit savedVisit = visitService.save(newVisit);
+
+        RoomReservation savedRoomReservation =  savedVisit.getRoomReservation();
+        savedRoomReservation.setVisit(savedVisit);
+        roomReservationService.save(savedRoomReservation);
+
+        return savedVisit;
+    }
+
+    @Transactional
+    public RoomReservation createRoomReservation(RoomDailyReservation roomDailyReservation, VisitDTO visitDTO) {
+        requireNonNull(roomDailyReservation);
+        requireNonNull(visitDTO);
+
+        RoomReservation newRoomReservation = RoomReservation
+                .builder()
+                .visit(new Visit()) //todo: tbc
+                .reservationStart(RoomReservationStart.getFromLocalTime(visitDTO.getDateTime().toLocalTime()))
+                .roomDailyReservation(roomDailyReservation)
+                .room(roomDailyReservation.getRoom())
+                .build();
+
+        return roomReservationService.save(newRoomReservation);
+    }
+
+    private RoomDailyReservation saveRoomDailyReservation(VisitDTO visitDTO) {
+        requireNonNull(visitDTO);
+
+        RoomDailyReservation newRoomDailyReservation = RoomDailyReservation
+                .builder()
+                .date(visitDTO.getDateTime().toLocalDate())
+                .room(roomService.findById(visitDTO.getRoomReservation().getRoom().getId()).orElseThrow(IllegalArgumentException::new))
+                .vet(vetService.findById(visitDTO.getVet().getId()).orElseThrow(IllegalArgumentException::new))
+                .build();
+
+        RoomDailyReservation savedRoomDailyReservation = roomDailyReservationService.save(newRoomDailyReservation);
+        return savedRoomDailyReservation;
     }
 
 

@@ -1,5 +1,6 @@
 package net.dzioba.petclinicmicro.common.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +25,7 @@ public class PetDTO {
 
     @Past
     @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
 
     @NotNull
