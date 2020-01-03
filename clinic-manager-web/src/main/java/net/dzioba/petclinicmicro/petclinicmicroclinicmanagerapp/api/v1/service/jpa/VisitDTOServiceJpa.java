@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -119,28 +120,39 @@ public class VisitDTOServiceJpa implements VisitDTOService {
         requireNonNull(visitDTO.getVet());
         requireNonNull(visitDTO.getRoomReservation());
 
-        LocalDateTime dateTime = visitDTO.getDateTime();
-        List<RoomDailyReservation> roomDailyReservations = roomDailyReservationService.findByDate(dateTime.toLocalDate());
+        Room room = roomService.findById(visitDTO.getRoomReservation().getRoom().getId()).orElseThrow(IllegalArgumentException::new);
 
-        RoomDailyReservation roomDailyReservation = roomDailyReservations.stream().filter(rDR -> rDR.getRoom().getId()
-                .equals(visitDTO.getRoomReservation().getRoom().getId()))
-                 .findAny().orElse(null);
-
-        if (roomDailyReservation != null) {
-            // roomDailyReservation exist in db case:
-            RoomReservation roomReservation  = createRoomReservation(roomDailyReservation, visitDTO);
-
-            Visit visit = createVisit(roomReservation, visitDTO);
-            return visitMapper.visitToVisitDTO(visit);
+        // try to find proper roomDailyReservation in db:
+        List<RoomDailyReservation> roomDailyReservations = roomDailyReservationService.findByRoomAndDate(room, visitDTO.getDateTime().toLocalDate());
+        RoomDailyReservation roomDailyReservation;
+        switch (roomDailyReservations.size()) {
+            case 0 :
+                // roomDailyReservation doesn't exist in db - so lets create new:
+                roomDailyReservation = saveRoomDailyReservation(visitDTO);
+                break;
+            default:
+                // roomDailyReservation exist in db - so use it and verify collision:
+                roomDailyReservation = roomDailyReservations.get(0);
+                if (isReservationCollision(roomDailyReservation.getRoomReservations(), visitDTO.getDateTime().toLocalTime())){
+                    return null;
+                }
         }
-
-        // roomDailyReservation doesn't exist in db case:
-        roomDailyReservation = saveRoomDailyReservation(visitDTO);
 
         RoomReservation roomReservation  = createRoomReservation(roomDailyReservation, visitDTO);
 
         Visit visit = createVisit(roomReservation, visitDTO);
+
         return visitMapper.visitToVisitDTO(visit);
+    }
+
+    private boolean isReservationCollision(List<RoomReservation> roomReservations, LocalTime localTime) {
+        requireNonNull(roomReservations);
+        requireNonNull(localTime);
+
+        long collisionCounter = roomReservations.stream().filter(roomReservation -> roomReservation.getReservationStart()
+                        .equals(RoomReservationStart.getFromLocalTime(localTime))).count();
+
+        return collisionCounter > 0;
     }
 
     @Transactional

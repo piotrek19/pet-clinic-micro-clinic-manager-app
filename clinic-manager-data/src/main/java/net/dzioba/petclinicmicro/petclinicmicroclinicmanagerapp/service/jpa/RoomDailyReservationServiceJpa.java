@@ -2,6 +2,7 @@ package net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.service.jpa;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain.Room;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.domain.RoomDailyReservation;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.repository.RoomDailyReservationRepository;
 import net.dzioba.petclinicmicro.petclinicmicroclinicmanagerapp.service.RoomDailyReservationService;
@@ -69,5 +70,14 @@ public class RoomDailyReservationServiceJpa implements RoomDailyReservationServi
         requireNonNull(date);
 
         return roomDailyReservationRepository.findByDate(date);
+    }
+
+    @Override
+    public List<RoomDailyReservation> findByRoomAndDate(Room room, LocalDate date) {
+        log.debug(className + "- findByRoomAndDate for room date: " + room + date);
+        requireNonNull(room);
+        requireNonNull(date);
+
+        return roomDailyReservationRepository.findByRoomAndDate(room, date);
     }
 }

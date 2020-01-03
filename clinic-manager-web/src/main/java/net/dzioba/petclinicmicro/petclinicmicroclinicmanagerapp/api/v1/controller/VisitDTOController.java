@@ -34,13 +34,20 @@ public class VisitDTOController {
     }
 
     @PostMapping
-    public ResponseEntity<VisitDTO> scheduleThisVisit(@RequestBody VisitDTO visitDTO){
+    public ResponseEntity<VisitDTO> scheduleThisVisit(@RequestBody VisitDTO visitDTO) {
         log.debug(className + " - scheduleThisVisit for object: " + visitDTO);
 
-        VisitDTO savedVisit = visitDTOService.scheduleThisVisit(visitDTO);
+        try {
+            VisitDTO savedVisit = visitDTOService.scheduleThisVisit(visitDTO);
+            if (savedVisit != null)
+                return ResponseEntity.created(URI.create(BASE_URL + "/" + savedVisit.getId())).body(savedVisit);
+            else
+                return ResponseEntity.status(409).build();
 
-        return ResponseEntity.created(URI.create(BASE_URL + "/" + savedVisit.getId()))
-                .body(savedVisit);
+        } catch (IllegalArgumentException e) {
+            log.debug(className + " - scheduleThisVisit - bad request with object: " + visitDTO);
+            return ResponseEntity.status(400).build();
+        }
+
     }
-
 }
