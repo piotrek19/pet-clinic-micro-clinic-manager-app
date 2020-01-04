@@ -38,7 +38,7 @@ public class Pet extends BaseEntity {
     private Set<Visit> visits = new HashSet<>();
 
     @Builder
-    public Pet(Long id, @NotBlank @Size(max = 255) String name, LocalDate birthDate, PetType petType, Owner owner, Set<Visit> visits) {
+    public Pet(Long id, String name, LocalDate birthDate, PetType petType, Owner owner, Set<Visit> visits) {
         super(id);
         this.name = name;
         this.birthDate = birthDate;
