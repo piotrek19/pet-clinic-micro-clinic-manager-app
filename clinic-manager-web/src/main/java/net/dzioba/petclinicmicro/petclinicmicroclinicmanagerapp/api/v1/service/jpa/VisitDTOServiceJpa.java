@@ -155,8 +155,7 @@ public class VisitDTOServiceJpa implements VisitDTOService {
         return collisionCounter > 0;
     }
 
-    @Transactional
-    public Visit saveVisit(RoomReservation roomReservation, VisitDTO visitDTO) {
+    private Visit saveVisit(RoomReservation roomReservation, VisitDTO visitDTO) {
         requireNonNull(roomReservation);
         requireNonNull(visitDTO);
 
@@ -179,8 +178,7 @@ public class VisitDTOServiceJpa implements VisitDTOService {
         return savedVisit;
     }
 
-    @Transactional
-    public RoomReservation saveRoomReservation(RoomDailyReservation roomDailyReservation, VisitDTO visitDTO) {
+    private RoomReservation saveRoomReservation(RoomDailyReservation roomDailyReservation, VisitDTO visitDTO) {
         requireNonNull(roomDailyReservation);
         requireNonNull(visitDTO);
 
@@ -195,8 +193,7 @@ public class VisitDTOServiceJpa implements VisitDTOService {
         return roomReservationService.save(newRoomReservation);
     }
 
-    @Transactional
-    public RoomDailyReservation saveRoomDailyReservation(VisitDTO visitDTO) {
+    private RoomDailyReservation saveRoomDailyReservation(VisitDTO visitDTO) {
         requireNonNull(visitDTO);
 
         RoomDailyReservation newRoomDailyReservation = RoomDailyReservation
